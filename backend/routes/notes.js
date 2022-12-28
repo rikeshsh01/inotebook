@@ -48,17 +48,7 @@ router.post('/addnotes',fetchuser , [
 
 
 // Update notes using: post "/api/notes/updatenotes". Login to Be Required. 
-router.put('/updatenotes/:id',fetchuser,[
-  body('title',"Enter Valid Title").isLength({ min: 3 }),
-  body('description', "Description counld not be less than 5 charecter").isLength({ min: 5 })
-], async (req, res) => {
-  const errors = validationResult(req);
-
-  // Check wheather the user with the email exist already
-  if (!errors.isEmpty()) {
-      return res.status(400).json({ errors: errors.array() });
-  }
-
+router.put('/updatenotes/:id',fetchuser, async (req, res) => {
   try {
     const {title,description,tag} = req.body;
     console.log(title);
