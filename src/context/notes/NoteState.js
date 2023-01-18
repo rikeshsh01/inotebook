@@ -12,12 +12,13 @@ export default function NoteState(props) {
       method: 'GET', // *GET, POST, PUT, DELETE, etc.
       headers: {
         'Content-Type': 'application/json',
-        "auth-token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNjNhNDc0OTg4Yzk1NjI2Nzk4ZGMwNGU4In0sImlhdCI6MTY3MTcyMjIxMH0.Jyw4RfC-xqghVdbpNgp_fTQ12GVgUExZk1meANaY_xc"
+        "auth-token": localStorage.getItem("token")
         // 'Content-Type': 'application/x-www-form-urlencoded',
       }
     });
-
-    const json = await response.json() 
+    // let updatedNote = JSON.parse(JSON.stringify(notes));
+    const json = await response.json();
+    // console.log(json)
     setNotes(json)
   }
 
@@ -28,15 +29,17 @@ export default function NoteState(props) {
       method: 'POST', // *GET, POST, PUT, DELETE, etc.
       headers: {
         'Content-Type': 'application/json',
-        "auth-token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNjNhNDc0OTg4Yzk1NjI2Nzk4ZGMwNGU4In0sImlhdCI6MTY3MTcyMjIxMH0.Jyw4RfC-xqghVdbpNgp_fTQ12GVgUExZk1meANaY_xc"
+        "auth-token": localStorage.getItem("token")
         // 'Content-Type': 'application/x-www-form-urlencoded',
       },
       body: JSON.stringify({ title, description, tag }) // body data type must match "Content-Type" header
     });
+    // console.log(response, "Add Note");
 
-    const note = await response.json();
-    setNotes(notes.concat(note))
-    console.log(note," Added")
+    const json = await response.json();
+    // console.log(json.saveNote,"JSON")
+    setNotes(notes.concat(json.saveNote))
+    // setNotes(notes => [...notes,json.saveNote])
   }
 
 
@@ -47,14 +50,14 @@ export default function NoteState(props) {
       method: 'DELETE', // *GET, POST, PUT, DELETE, etc.
       headers: {
         'Content-Type': 'application/json',
-        "auth-token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNjNhNDc0OTg4Yzk1NjI2Nzk4ZGMwNGU4In0sImlhdCI6MTY3MTcyMjIxMH0.Jyw4RfC-xqghVdbpNgp_fTQ12GVgUExZk1meANaY_xc"
+        "auth-token": localStorage.getItem("token")
         // 'Content-Type': 'application/x-www-form-urlencoded',
       }
     });
     const json = await response.json();
 
-    console.log(json)
-    console.log(id, " Deleted");
+    // console.log(json)
+    // console.log(id, " Deleted");
     const noteToBeDeleted = notes.filter((note) => {
       return note._id !== id
     })
@@ -71,18 +74,19 @@ export default function NoteState(props) {
       method: 'PUT', // *GET, POST, PUT, DELETE, etc.
       headers: {
         'Content-Type': 'application/json',
-        "auth-token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNjNhNDc0OTg4Yzk1NjI2Nzk4ZGMwNGU4In0sImlhdCI6MTY3MTcyMjIxMH0.Jyw4RfC-xqghVdbpNgp_fTQ12GVgUExZk1meANaY_xc"
+        "auth-token": localStorage.getItem("token")
         // 'Content-Type': 'application/x-www-form-urlencoded',
       },
       body: JSON.stringify({ title, description, tag }) // body data type must match "Content-Type" header
     });
+    // console.log(response,"Update Note")
     const json = await response.json();
-    console.log(json)
+    // console.log(json)
     // Logic to edit in client
 
     let updatedNote = JSON.parse(JSON.stringify(notes));
 
-    console.log(updatedNote, "Update")
+    // console.log(updatedNote, "Update")
     for (let index = 0; index < updatedNote.length; index++) {
       const element = updatedNote[index];
       if (element._id === id) {
@@ -92,7 +96,7 @@ export default function NoteState(props) {
         break;
       }
     }
-    console.log(id, updatedNote)
+    // console.log(id, updatedNote)
     setNotes(updatedNote);
   }
 

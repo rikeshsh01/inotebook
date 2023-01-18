@@ -16,18 +16,19 @@ router.post('/createuser', [
     body('name').isLength({ min: 3 }),
     body('password').isLength({ min: 5 })
 ], async (req, res) => {
+    let success = false;
     // console.log(req.body);
     const errors = validationResult(req);
 
     // Check wheather the user with the email exist already
     if (!errors.isEmpty()) {
-        return res.status(400).json({ errors: errors.array() });
+        return res.status(400).json({errors: errors.array() });
     }
     try {
         let user = await Users.findOne({ email: req.body.email });
 
         if (user) {
-            return res.status(400).json({ error: "the user with this email is already exist" });
+            return res.status(400).json({success, error: "the user with this email is already exist" });
         }
         // Create new user
         const salt = await bcrypt.genSalt(10);
@@ -45,7 +46,8 @@ router.post('/createuser', [
         }
 
         const authToken = jwt.sign(data, privateKey);
-        res.send({authToken});
+        success = true;
+        res.send({success,authToken});
 
         // .then(user => res.json(user))
         //     .catch(
@@ -71,7 +73,7 @@ router.post('/login', [
     body('email',"Enter valid Email").isEmail(),
     body('password', "Password unvalid").isLength({ min: 5 })
 ], async (req, res) => {
-    
+    let success = false;
     const errors = validationResult(req);
 
     // Check wheather the user with the email exist already
@@ -84,7 +86,8 @@ console.log(req.body);
         let user = await Users.findOne({ email });
 
         if (!user) {
-            return res.status(400).json({ error: "User Doesnot exist" });
+            success=false;
+            return res.status(400).json({success, error: "User Doesnot exist" });
         }
         console.log(user.password, "database pass")
         console.log(password, "destructured pass")
@@ -92,7 +95,8 @@ console.log(req.body);
         const passwordCOmpare = await bcrypt.compare(password,user.password);
 
         if (!passwordCOmpare) {
-            return res.status(400).json({ error: "Password doesnot matched" });
+            success=false;
+            return res.status(400).json({success, error: "Password doesnot matched" });
         }
 
         const data = {
@@ -102,7 +106,8 @@ console.log(req.body);
         }
 
         const authToken = jwt.sign(data, privateKey);
-        res.send({authToken});
+        success = true;
+        res.send({success, authToken});
 
     } catch (error) {
         console.log(error.message);
